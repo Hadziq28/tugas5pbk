@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" context="width=device-width, initial-scale=1.0">
+  <title>Vue.js Example</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.2.41/dist/vue.global.js"></script>
+</head>
+<body>
+  <div id="app">
+    <h1>{{ message }}</h1>
+
+    <!-- List Rendering -->
+    <ul>
+      <li v-for="item in items" :key="item.id">
+        {{ item.name }} - {{ item.price | currency }}
+      </li>
+    </ul>
+
+    <!-- Input to add new item -->
+    <input v-model="newItem" placeholder="Add new item" />
+    <button @click="addItem">Add Item</button>
+
+    <!-- Computed Property -->
+    <h2>Total Price: {{ totalPrice }}</h2>
+
+    <!-- Watcher -->
+    <p>Changes in Item List: {{ itemListChanged }}</p>
+
+    <!-- Template Ref -->
+    <div>
+      <input ref="inputField" placeholder="Focus me after button click" />
+      <button @click="focusInput">Focus Input</button>
+    </div>
+
+    <!-- Lifecycle Hook: Created -->
+    <p>{{ lifecycleMessage }}</p>
+  </div>
+
+  <script>
+    const { createApp, computed, watch, ref, onMounted } = Vue;
+
+    createApp({
+      data() {
+        return {
+          message: 'Welcome to Vue.js!',
+          items: [
+            { id: 1, name: 'Apple', price: 10 },
+            { id: 2, name: 'Banana', price: 5 },
+          ],
+          newItem: '',
+          lifecycleMessage: 'Component is created.',
+        };
+      },
+      computed: {
+        // Computed property to calculate total price
+        totalPrice() {
+          return this.items.reduce((sum, item) => sum + item.price, 0);
+        },
+      },
+      watch: {
+        // Watcher for detecting changes in items list
+        items: {
+          handler(newItems, oldItems) {
+            this.itemListChanged = Items changed from ${oldItems.length} to ${newItems.length};
+          },
+          deep: true,
+        },
+      },
+      methods: {
+        addItem() {
+          if (this.newItem.trim() === '') return;
+          const newItem = { id: Date.now(), name: this.newItem, price: Math.floor(Math.random() * 10) + 1 };
+          this.items.push(newItem);
+          this.newItem = ''; // Clear input field after adding
+        },
+        focusInput() {
+          // Focus the input field using template ref
+          this.$refs.inputField.focus();
+        },
+      },
+      mounted() {
+        // Lifecycle hook: Mounted
+        console.log('Component is mounted!');
+      },
+    }).mount('#app');
+  </script>
+</body>
+</html>
